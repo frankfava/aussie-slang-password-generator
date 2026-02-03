@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Aussie Slang Password Generator</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦘</text></svg>">
+	<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+	<style>
+		*,
+		*::before,
+		*::after {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		:root {
+			--sun-yellow: #F2C744;
+			--outback-orange: #E8752A;
+			--desert-red: #C4412B;
+			--ocean-teal: #1A8A7D;
+			--deep-navy: #0B1D3A;
+			--sand: #F5E6C8;
+			--sand-light: #FBF3E4;
+			--bark: #3D2B1F;
+			--white: #FFFDF8;
+		}
+
+		html {
+			scroll-behavior: smooth;
+		}
+
+		body {
+			font-family: 'Outfit', sans-serif;
+			background: var(--sand-light);
+			color: var(--bark);
+			min-height: 100vh;
+			overflow-x: hidden;
+		}
+
+		/* === BACKGROUND TEXTURE === */
+		body::before {
+			content: '';
+			position: fixed;
+			inset: 0;
+			background:
+				radial-gradient(ellipse 80% 60% at 20% 10%, rgba(242, 199, 68, 0.15), transparent),
+				radial-gradient(ellipse 60% 50% at 85% 80%, rgba(232, 117, 42, 0.1), transparent),
+				radial-gradient(ellipse 40% 40% at 50% 50%, rgba(26, 138, 125, 0.05), transparent);
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		/* === GRAIN OVERLAY === */
+		body::after {
+			content: '';
+			position: fixed;
+			inset: 0;
+			opacity: 0.03;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+			pointer-events: none;
+			z-index: 0;
+		}
+
+		/* === LAYOUT === */
+		.container {
+			position: relative;
+			z-index: 1;
+			max-width: 960px;
+			margin: 0 auto;
+			padding: 2rem 1.5rem 4rem;
+		}
+
+		/* === HEADER === */
+		header {
+			text-align: center;
+			padding: 3rem 0 2.5rem;
+			animation: fadeSlideIn 0.8s ease-out;
+		}
+
+		.flag-stripe {
+			display: flex;
+			justify-content: center;
+			gap: 6px;
+			margin-bottom: 1.5rem;
+		}
+
+		.flag-stripe span {
+			width: 32px;
+			height: 6px;
+			border-radius: 3px;
+		}
+
+		.flag-stripe span:nth-child(1) {
+			background: var(--ocean-teal);
+		}
+
+		.flag-stripe span:nth-child(2) {
+			background: var(--sun-yellow);
+		}
+
+		.flag-stripe span:nth-child(3) {
+			background: var(--outback-orange);
+		}
+
+		.flag-stripe span:nth-child(4) {
+			background: var(--desert-red);
+		}
+
+		.flag-stripe span:nth-child(5) {
+			background: var(--ocean-teal);
+		}
+
+		h1 {
+			font-family: 'Dela Gothic One', cursive;
+			font-size: clamp(2rem, 6vw, 3.2rem);
+			color: var(--deep-navy);
+			line-height: 1.15;
+			letter-spacing: -0.02em;
+		}
+
+		h1 .accent {
+			color: var(--outback-orange);
+			display: block;
+		}
+
+		.tagline {
+			font-size: 1.05rem;
+			color: var(--bark);
+			opacity: 0.6;
+			margin-top: 0.75rem;
+			font-weight: 300;
+		}
+
+		/* === KANGAROO ICON === */
+		.icon-roo {
+			font-size: 3rem;
+			margin-bottom: 0.5rem;
+			display: block;
+			animation: bounce 2s ease-in-out infinite;
+		}
+
+		@keyframes bounce {
+
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-8px);
+			}
+		}
+
+		/* === CONTROLS CARD === */
+		.controls-card {
+			background: var(--white);
+			border: 2px solid rgba(61, 43, 31, 0.08);
+			border-radius: 20px;
+			padding: 2rem;
+			margin-bottom: 1.5rem;
+			box-shadow:
+				0 1px 3px rgba(61, 43, 31, 0.04),
+				0 8px 32px rgba(61, 43, 31, 0.06);
+			animation: fadeSlideIn 0.8s ease-out 0.15s both;
+		}
+
+		.control-group {
+			margin-bottom: 1.5rem;
+		}
+
+		.control-group:last-child {
+			margin-bottom: 0;
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			font-size: 0.85rem;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--deep-navy);
+			margin-bottom: 0.6rem;
+		}
+
+		/* === SLIDER === */
+		.slider-row {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+
+		input[type="range"] {
+			-webkit-appearance: none;
+			appearance: none;
+			flex: 1;
+			height: 8px;
+			border-radius: 4px;
+			background: linear-gradient(90deg, var(--ocean-teal), var(--sun-yellow), var(--outback-orange));
+			outline: none;
+		}
+
+		input[type="range"]::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background: var(--white);
+			border: 3px solid var(--outback-orange);
+			cursor: pointer;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+			transition: transform 0.15s ease;
+		}
+
+		input[type="range"]::-webkit-slider-thumb:hover {
+			transform: scale(1.15);
+		}
+
+		input[type="range"]::-moz-range-thumb {
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background: var(--white);
+			border: 3px solid var(--outback-orange);
+			cursor: pointer;
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+		}
+
+		.slider-value {
+			font-family: 'DM Mono', monospace;
+			font-size: 1.1rem;
+			font-weight: 500;
+			color: var(--outback-orange);
+			min-width: 28px;
+			text-align: center;
+		}
+
+		/* === CHECKBOXES === */
+		.checkbox-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0.6rem 1.5rem;
+		}
+
+		.checkbox-label {
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			cursor: pointer;
+			font-weight: 400;
+			font-size: 0.95rem;
+			text-transform: none;
+			letter-spacing: 0;
+			color: var(--bark);
+			transition: color 0.15s;
+		}
+
+		.checkbox-label:hover {
+			color: var(--outback-orange);
+		}
+
+		.checkbox-label input[type="checkbox"] {
+			display: none;
+		}
+
+		.check-box {
+			width: 22px;
+			height: 22px;
+			border-radius: 6px;
+			border: 2px solid rgba(61, 43, 31, 0.2);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: all 0.2s ease;
+			flex-shrink: 0;
+		}
+
+		.check-box svg {
+			width: 14px;
+			height: 14px;
+			opacity: 0;
+			transform: scale(0.5);
+			transition: all 0.2s ease;
+		}
+
+		.checkbox-label input:checked+.check-box {
+			background: var(--ocean-teal);
+			border-color: var(--ocean-teal);
+		}
+
+		.checkbox-label input:checked+.check-box svg {
+			opacity: 1;
+			transform: scale(1);
+		}
+
+		/* === SEPARATOR TOGGLE === */
+		.sep-toggle {
+			display: flex;
+			gap: 0.5rem;
+		}
+
+		.sep-btn {
+			flex: 1;
+			padding: 0.6rem 0.75rem;
+			border-radius: 10px;
+			border: 2px solid rgba(61, 43, 31, 0.1);
+			background: transparent;
+			color: var(--bark);
+			font-family: 'Outfit', sans-serif;
+			font-size: 0.9rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.2s ease;
+		}
+
+		.sep-btn .sep-char {
+			font-family: 'DM Mono', monospace;
+			font-weight: 600;
+			color: var(--outback-orange);
+		}
+
+		.sep-btn:hover {
+			border-color: rgba(61, 43, 31, 0.2);
+			background: rgba(61, 43, 31, 0.03);
+		}
+
+		.sep-btn.active {
+			border-color: var(--ocean-teal);
+			background: rgba(26, 138, 125, 0.08);
+			color: var(--ocean-teal);
+		}
+
+		.sep-btn.active .sep-char {
+			color: var(--ocean-teal);
+		}
+
+		/* === GENERATE BUTTON === */
+		.generate-btn {
+			display: block;
+			width: 100%;
+			padding: 1.1rem 2rem;
+			border: none;
+			border-radius: 14px;
+			background: linear-gradient(135deg, var(--outback-orange), var(--desert-red));
+			color: var(--white);
+			font-family: 'Dela Gothic One', cursive;
+			font-size: 1.15rem;
+			letter-spacing: 0.03em;
+			cursor: pointer;
+			transition: all 0.25s ease;
+			box-shadow:
+				0 4px 16px rgba(232, 117, 42, 0.3),
+				0 1px 3px rgba(196, 65, 43, 0.2);
+			animation: fadeSlideIn 0.8s ease-out 0.3s both;
+			position: relative;
+			overflow: hidden;
+			margin-bottom: 1.5rem;
+		}
+
+		.generate-btn::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+			opacity: 0;
+			transition: opacity 0.25s;
+		}
+
+		.generate-btn:hover {
+			transform: translateY(-2px);
+			box-shadow:
+				0 8px 28px rgba(232, 117, 42, 0.35),
+				0 2px 6px rgba(196, 65, 43, 0.25);
+		}
+
+		.generate-btn:hover::after {
+			opacity: 1;
+		}
+
+		.generate-btn:active {
+			transform: translateY(0);
+			box-shadow:
+				0 2px 8px rgba(232, 117, 42, 0.3),
+				0 1px 2px rgba(196, 65, 43, 0.2);
+		}
+
+		/* === PASSWORD OUTPUT === */
+		.password-card {
+			background: var(--deep-navy);
+			border-radius: 20px;
+			padding: 2rem;
+			margin-bottom: 1.5rem;
+			box-shadow:
+				0 8px 32px rgba(11, 29, 58, 0.2),
+				0 1px 3px rgba(11, 29, 58, 0.1);
+			animation: fadeSlideIn 0.8s ease-out 0.45s both;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.password-card::before {
+			content: '';
+			position: absolute;
+			top: -50%;
+			right: -30%;
+			width: 60%;
+			height: 200%;
+			background: radial-gradient(ellipse, rgba(26, 138, 125, 0.12), transparent 70%);
+			pointer-events: none;
+		}
+
+		.password-label {
+			color: rgba(255, 253, 248, 0.5);
+			margin-bottom: 1rem;
+		}
+
+		.password-display {
+			font-family: 'DM Mono', monospace;
+			font-size: clamp(1rem, 3.5vw, 1.35rem);
+			color: var(--sun-yellow);
+			word-break: break-all;
+			line-height: 1.6;
+			min-height: 3.2rem;
+			display: flex;
+			align-items: center;
+			position: relative;
+			z-index: 1;
+			user-select: all;
+		}
+
+		.password-display.empty {
+			color: rgba(255, 253, 248, 0.2);
+			font-style: italic;
+			font-family: 'Outfit', sans-serif;
+			user-select: none;
+		}
+
+		.password-actions {
+			display: flex;
+			gap: 0.75rem;
+			margin-top: 1.25rem;
+			position: relative;
+			z-index: 1;
+		}
+
+		.action-btn {
+			flex: 1;
+			padding: 0.7rem 1rem;
+			border-radius: 10px;
+			border: 1.5px solid rgba(255, 253, 248, 0.12);
+			background: rgba(255, 253, 248, 0.06);
+			color: var(--sand);
+			font-family: 'Outfit', sans-serif;
+			font-size: 0.85rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.2s ease;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.4rem;
+		}
+
+		.action-btn:hover {
+			background: rgba(255, 253, 248, 0.12);
+			border-color: rgba(255, 253, 248, 0.2);
+		}
+
+		.action-btn.copied {
+			background: rgba(26, 138, 125, 0.3);
+			border-color: var(--ocean-teal);
+			color: var(--ocean-teal);
+		}
+
+		.action-btn svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		/* === STRENGTH METER === */
+		.strength-bar-container {
+			margin-top: 1.25rem;
+			position: relative;
+			z-index: 1;
+		}
+
+		.strength-row {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 0.5rem;
+		}
+
+		.strength-label {
+			font-size: 0.75rem;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: rgba(255, 253, 248, 0.4);
+		}
+
+		.strength-text {
+			font-size: 0.8rem;
+			font-weight: 600;
+			letter-spacing: 0.04em;
+		}
+
+		.strength-track {
+			height: 6px;
+			border-radius: 3px;
+			background: rgba(255, 253, 248, 0.08);
+			overflow: hidden;
+		}
+
+		.strength-fill {
+			height: 100%;
+			border-radius: 3px;
+			transition: width 0.5s ease, background 0.5s ease;
+			width: 0;
+		}
+
+		/* === SLANG BREAKDOWN === */
+		.breakdown-card {
+			background: var(--white);
+			border: 2px solid rgba(61, 43, 31, 0.08);
+			border-radius: 20px;
+			padding: 2rem;
+			box-shadow:
+				0 1px 3px rgba(61, 43, 31, 0.04),
+				0 8px 32px rgba(61, 43, 31, 0.06);
+			animation: fadeSlideIn 0.8s ease-out 0.6s both;
+		}
+
+		.breakdown-title {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-bottom: 1.25rem;
+		}
+
+		.breakdown-title h3 {
+			font-family: 'Dela Gothic One', cursive;
+			font-size: 1rem;
+			color: var(--deep-navy);
+		}
+
+		.word-list {
+			display: flex;
+			flex-direction: column;
+			gap: 0.6rem;
+		}
+
+		.word-item {
+			display: flex;
+			align-items: baseline;
+			gap: 0.75rem;
+			padding: 0.6rem 0;
+			border-bottom: 1px solid rgba(61, 43, 31, 0.06);
+		}
+
+		.word-item:last-child {
+			border-bottom: none;
+		}
+
+		.word-slang {
+			font-family: 'DM Mono', monospace;
+			font-weight: 500;
+			color: var(--outback-orange);
+			min-width: 120px;
+			font-size: 0.95rem;
+		}
+
+		.word-phonetic {
+			font-family: 'DM Mono', monospace;
+			font-size: 0.8rem;
+			color: var(--ocean-teal);
+			opacity: 0.7;
+			min-width: 110px;
+			font-style: italic;
+		}
+
+		.word-meaning {
+			color: var(--bark);
+			opacity: 0.65;
+			font-size: 0.9rem;
+			font-weight: 300;
+		}
+
+		.empty-breakdown {
+			color: var(--bark);
+			opacity: 0.35;
+			text-align: center;
+			padding: 1rem;
+			font-style: italic;
+		}
+
+		/* === FOOTER === */
+		footer {
+			text-align: center;
+			padding: 3rem 0 1rem;
+			color: var(--bark);
+			opacity: 0.35;
+			font-size: 0.8rem;
+			animation: fadeSlideIn 0.8s ease-out 0.75s both;
+		}
+
+		/* === ANIMATIONS === */
+		@keyframes fadeSlideIn {
+			from {
+				opacity: 0;
+				transform: translateY(16px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes popIn {
+			0% {
+				transform: scale(0.95);
+				opacity: 0;
+			}
+
+			70% {
+				transform: scale(1.02);
+			}
+
+			100% {
+				transform: scale(1);
+				opacity: 1;
+			}
+		}
+
+		.pop-in {
+			animation: popIn 0.35s ease-out;
+		}
+
+		/* === RESPONSIVE === */
+		@media (max-width: 500px) {
+			.container {
+				padding: 1.25rem 1rem 3rem;
+			}
+
+			.controls-card,
+			.password-card,
+			.breakdown-card {
+				padding: 1.5rem;
+			}
+
+			.checkbox-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.password-actions {
+				flex-direction: column;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="container">
+		<header>
+			<span class="icon-roo">🦘</span>
+			<div class="flag-stripe">
+				<span></span><span></span><span></span><span></span><span></span>
+			</div>
+			<h1>Aussie Slang<span class="accent">Password Generator</span></h1>
+			<p class="tagline">Fair dinkum secure passwords, mate.</p>
+		</header>
+
+		<!-- Controls -->
+		<div class="controls-card">
+			<div class="control-group">
+				<label>Number of Words</label>
+				<div class="slider-row">
+					<input type="range" id="wordCount" min="1" max="8" value="4">
+					<span class="slider-value" id="wordCountDisplay">4</span>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label>Options</label>
+				<div class="checkbox-grid">
+					<label class="checkbox-label">
+						<input type="checkbox" id="optNumbers" checked>
+						<span class="check-box">
+							<svg viewBox="0 0 14 14" fill="none">
+								<path d="M2 7.5L5.5 11L12 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+							</svg>
+						</span>
+						Add numbers
+					</label>
+					<label class="checkbox-label">
+						<input type="checkbox" id="optSymbols">
+						<span class="check-box">
+							<svg viewBox="0 0 14 14" fill="none">
+								<path d="M2 7.5L5.5 11L12 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+							</svg>
+						</span>
+						Add symbols
+					</label>
+					<label class="checkbox-label">
+						<input type="checkbox" id="optCapitalize" checked>
+						<span class="check-box">
+							<svg viewBox="0 0 14 14" fill="none">
+								<path d="M2 7.5L5.5 11L12 3" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+							</svg>
+						</span>
+						Capitalize words
+					</label>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label>Separator</label>
+				<div class="sep-toggle">
+					<button class="sep-btn active" data-sep="" id="sepNone">None</button>
+					<button class="sep-btn" data-sep="-" id="sepDash">Dash <span class="sep-char">-</span></button>
+					<button class="sep-btn" data-sep="_" id="sepUnderscore">Underscore <span class="sep-char">_</span></button>
+				</div>
+			</div>
+		</div>
+
+		<button class="generate-btn" id="generateBtn">🤙 Generate Password, Mate!</button>
+
+		<!-- Password Output -->
+		<div class="password-card">
+			<label class="password-label">Your Password</label>
+			<div class="password-display empty" id="passwordDisplay">Hit the button to get crackin'...</div>
+			<div class="password-actions">
+				<button class="action-btn" id="copyBtn">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<rect x="9" y="9" width="13" height="13" rx="2" />
+						<path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+					</svg>
+					Copy
+				</button>
+				<button class="action-btn" id="refreshBtn">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<polyline points="23 4 23 10 17 10" />
+						<path d="M20.49 15a9 9 0 11-2.12-9.36L23 10" />
+					</svg>
+					New one
+				</button>
+			</div>
+			<div class="strength-bar-container" id="strengthContainer" style="display:none;">
+				<div class="strength-row">
+					<span class="strength-label">Strength</span>
+					<span class="strength-text" id="strengthText"></span>
+				</div>
+				<div class="strength-track">
+					<div class="strength-fill" id="strengthFill"></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Breakdown -->
+		<div class="breakdown-card">
+			<div class="breakdown-title">
+				<span>📖</span>
+				<h3>Slang Breakdown</h3>
+			</div>
+			<div class="word-list" id="wordList">
+				<div class="empty-breakdown">Generate a password to see what the slang means!</div>
+			</div>
+		</div>
+
+		<footer>Powered by Vegemite. No worries, it's secure.</footer>
+	</div>
+
+	<script>
+		const SLANG = [
+			{ word: "arvo", meaning: "Afternoon", phonetic: "AHR-voh" },
+			{ word: "barbie", meaning: "Barbecue", phonetic: "BAH-bee" },
+			{ word: "brekkie", meaning: "Breakfast", phonetic: "BREK-ee" },
+			{ word: "chunder", meaning: "To vomit", phonetic: "CHUN-dah" },
+			{ word: "cobber", meaning: "A close friend", phonetic: "KOB-ah" },
+			{ word: "crikey", meaning: "An exclamation of surprise", phonetic: "CRY-kee" },
+			{ word: "daggy", meaning: "Unfashionable, uncool", phonetic: "DAG-ee" },
+			{ word: "drongo", meaning: "A stupid person", phonetic: "DRONG-oh" },
+			{ word: "dunny", meaning: "Toilet, outhouse", phonetic: "DUN-ee" },
+			{ word: "esky", meaning: "A portable cooler", phonetic: "ESS-kee" },
+			{ word: "footy", meaning: "Australian football", phonetic: "FOOT-ee" },
+			{ word: "galah", meaning: "A foolish person", phonetic: "guh-LAH" },
+			{ word: "grommet", meaning: "A young surfer", phonetic: "GROM-it" },
+			{ word: "heaps", meaning: "A lot, lots of", phonetic: "HEEPS" },
+			{ word: "jillaroo", meaning: "Female ranch hand", phonetic: "JIL-ah-roo" },
+			{ word: "larrikin", meaning: "A mischievous person", phonetic: "LAR-ih-kin" },
+			{ word: "lollies", meaning: "Candy, sweets", phonetic: "LOL-eez" },
+			{ word: "mozzie", meaning: "Mosquito", phonetic: "MOZ-ee" },
+			{ word: "nappy", meaning: "A diaper", phonetic: "NAP-ee" },
+			{ word: "ocker", meaning: "An unsophisticated Australian", phonetic: "OK-ah" },
+			{ word: "pash", meaning: "A passionate kiss", phonetic: "PASH" },
+			{ word: "pokies", meaning: "Slot machines", phonetic: "POH-keez" },
+			{ word: "ripper", meaning: "Excellent, fantastic", phonetic: "RIP-ah" },
+			{ word: "servo", meaning: "Gas station", phonetic: "SUR-voh" },
+			{ word: "sheila", meaning: "A woman", phonetic: "SHEE-lah" },
+			{ word: "snag", meaning: "A sausage", phonetic: "SNAG" },
+			{ word: "stoked", meaning: "Very excited", phonetic: "STOHKT" },
+			{ word: "stubby", meaning: "A short bottle of beer", phonetic: "STUB-ee" },
+			{ word: "sunnies", meaning: "Sunglasses", phonetic: "SUN-eez" },
+			{ word: "thongs", meaning: "Flip-flops", phonetic: "THONGS" },
+			{ word: "tinny", meaning: "A can of beer", phonetic: "TIN-ee" },
+			{ word: "tucker", meaning: "Food", phonetic: "TUK-ah" },
+			{ word: "ute", meaning: "A utility vehicle, pickup", phonetic: "YOOT" },
+			{ word: "woop", meaning: "Remote outback area", phonetic: "WOOP" },
+			{ word: "yakka", meaning: "Work, labor", phonetic: "YAK-ah" },
+			{ word: "yobbo", meaning: "A rude young person", phonetic: "YOB-oh" },
+			{ word: "bonzer", meaning: "Great, excellent", phonetic: "BON-zah" },
+			{ word: "bogan", meaning: "An uncouth person", phonetic: "BOH-gun" },
+			{ word: "choccy", meaning: "Chocolate", phonetic: "CHOK-ee" },
+			{ word: "dingo", meaning: "Australian wild dog", phonetic: "DING-oh" },
+			{ word: "frothy", meaning: "A cold beer", phonetic: "FROTH-ee" },
+			{ word: "grouse", meaning: "Outstanding, awesome", phonetic: "GROWSS" },
+			{ word: "hooroo", meaning: "Goodbye", phonetic: "hoo-ROO" },
+			{ word: "jackaroo", meaning: "Male ranch hand", phonetic: "JAK-ah-roo" },
+			{ word: "maccas", meaning: "McDonald's", phonetic: "MAK-ahz" },
+			{ word: "prang", meaning: "A car accident", phonetic: "PRANG" },
+			{ word: "ranga", meaning: "A redhead", phonetic: "RANG-ah" },
+			{ word: "sickie", meaning: "A day off (feigning illness)", phonetic: "SIK-ee" },
+			{ word: "spiffy", meaning: "Stylish, well-dressed", phonetic: "SPIF-ee" },
+			{ word: "swagman", meaning: "A wandering laborer", phonetic: "SWAG-man" },
+			{ word: "whacker", meaning: "An idiot", phonetic: "WAK-ah" },
+			{ word: "chook", meaning: "A chicken", phonetic: "CHOOK" },
+			{ word: "brolly", meaning: "An umbrella", phonetic: "BROL-ee" },
+			{ word: "budgie", meaning: "A parakeet", phonetic: "BUJ-ee" },
+			{ word: "durry", meaning: "A cigarette", phonetic: "DUR-ee" },
+			{ word: "flanno", meaning: "A flannel shirt", phonetic: "FLAN-oh" },
+			{ word: "garbo", meaning: "A garbage collector", phonetic: "GAH-boh" },
+			{ word: "gander", meaning: "To have a look", phonetic: "GAN-dah" },
+			{ word: "knackered", meaning: "Very tired, exhausted", phonetic: "NAK-ud" },
+			{ word: "legit", meaning: "Genuine, real", phonetic: "luh-JIT" },
+			{ word: "moolah", meaning: "Money", phonetic: "MOO-lah" },
+			{ word: "nipper", meaning: "A young child", phonetic: "NIP-ah" },
+			{ word: "outback", meaning: "Remote interior of Australia", phonetic: "OWT-bak" },
+			{ word: "ratbag", meaning: "A troublemaker", phonetic: "RAT-bag" },
+			{ word: "reckon", meaning: "To think or believe", phonetic: "REK-in" },
+			{ word: "ropeable", meaning: "Very angry", phonetic: "ROHP-ah-bul" },
+			{ word: "sanger", meaning: "A sandwich", phonetic: "SANG-ah" },
+			{ word: "spewin", meaning: "Very upset or angry", phonetic: "SPYOO-in" },
+			{ word: "strewth", meaning: "An exclamation of surprise", phonetic: "STROOTH" },
+			{ word: "trackie", meaning: "Tracksuit pants", phonetic: "TRAK-ee" },
+			{ word: "troppo", meaning: "Crazy (from tropical heat)", phonetic: "TROP-oh" },
+			{ word: "wombat", meaning: "A stocky marsupial", phonetic: "WOM-bat" },
+			{ word: "zonked", meaning: "Extremely tired", phonetic: "ZONKT" },
+			{ word: "bathers", meaning: "Swimsuit", phonetic: "BAH-thuhz" },
+			{ word: "bloke", meaning: "A man, a guy", phonetic: "BLOHK" },
+			{ word: "bottleo", meaning: "A liquor store", phonetic: "BOT-ul-oh" },
+			{ word: "chuffed", meaning: "Very pleased", phonetic: "CHUFT" },
+			{ word: "devo", meaning: "Devastated", phonetic: "DEV-oh" },
+			{ word: "furphy", meaning: "A rumor or false story", phonetic: "FUR-fee" },
+			{ word: "kindie", meaning: "Kindergarten", phonetic: "KIN-dee" },
+			{ word: "mongrel", meaning: "A despicable person", phonetic: "MONG-grul" },
+			{ word: "nickers", meaning: "Underwear", phonetic: "NIK-ahz" },
+			{ word: "oldies", meaning: "Parents", phonetic: "OHL-deez" },
+			{ word: "prezzy", meaning: "A present, gift", phonetic: "PREZ-ee" },
+			{ word: "slab", meaning: "A 24-pack of beer", phonetic: "SLAB" },
+			{ word: "smoko", meaning: "A smoke or coffee break", phonetic: "SMOH-koh" },
+			{ word: "sparky", meaning: "An electrician", phonetic: "SPAH-kee" },
+			{ word: "togs", meaning: "Swimwear", phonetic: "TOGZ" },
+			{ word: "vego", meaning: "Vegetarian", phonetic: "VEJ-oh" },
+			{ word: "chalkie", meaning: "A teacher", phonetic: "CHAW-kee" },
+			{ word: "frank", meaning: "A top bloke", phonetic: "FRANK" },
+			{ word: "dipstick", meaning: "A foolish person", phonetic: "DIP-stik" },
+			{ word: "doovalacky", meaning: "A thingamajig", phonetic: "DOO-vah-lak-ee" },
+			{ word: "fisho", meaning: "A fishmonger", phonetic: "FISH-oh" },
+			{ word: "grundies", meaning: "Underpants", phonetic: "GRUN-deez" },
+			{ word: "kelpie", meaning: "Australian sheep dog", phonetic: "KEL-pee" },
+			{ word: "muso", meaning: "A musician", phonetic: "MYOO-zoh" },
+			{ word: "pozzy", meaning: "A good position or spot", phonetic: "POZ-ee" },
+			{ word: "rellies", meaning: "Relatives, family members", phonetic: "REL-eez" },
+			{ word: "sanga", meaning: "A sandwich", phonetic: "SANG-ah" },
+			{ word: "squiz", meaning: "A quick look", phonetic: "SKWIZ" },
+			{ word: "tinker", meaning: "To fiddle with something", phonetic: "TINK-ah" },
+			{ word: "whinge", meaning: "To complain", phonetic: "WINJ" },
+			{ word: "yeahnah", meaning: "No", phonetic: "YEH-nah" },
+			{ word: "nahyeah", meaning: "Yeah", phonetic: "NAH-yeh" },
+			{ word: "gday", meaning: "Hello", phonetic: "guh-DAY" },
+			{ word: "aggro", meaning: "Aggressive, angry", phonetic: "AG-roh" },
+			{ word: "ambo", meaning: "Ambulance or paramedic", phonetic: "AM-boh" },
+			{ word: "anklebiter", meaning: "A small child", phonetic: "ANK-ul-by-tah" },
+			{ word: "aussie", meaning: "An Australian", phonetic: "OZ-ee" },
+			{ word: "avo", meaning: "Avocado", phonetic: "AH-voh" },
+			{ word: "bail", meaning: "To cancel or leave", phonetic: "BAYL" },
+			{ word: "beaut", meaning: "Beautiful, great", phonetic: "BYOOT" },
+			{ word: "bikkie", meaning: "A biscuit or cookie", phonetic: "BIK-ee" },
+			{ word: "billy", meaning: "A tin for boiling water", phonetic: "BIL-ee" },
+			{ word: "bizzo", meaning: "Business, stuff", phonetic: "BIZ-oh" },
+			{ word: "blokey", meaning: "Masculine, macho", phonetic: "BLOH-kee" },
+			{ word: "bloody", meaning: "Very (intensifier)", phonetic: "BLUD-ee" },
+			{ word: "bludger", meaning: "A lazy person", phonetic: "BLUJ-ah" },
+			{ word: "bluey", meaning: "A blue heeler dog or redhead", phonetic: "BLOO-ee" },
+			{ word: "bodgy", meaning: "Poor quality, broken", phonetic: "BOJ-ee" },
+			{ word: "boozer", meaning: "A pub", phonetic: "BOO-zah" },
+			{ word: "brekky", meaning: "Breakfast", phonetic: "BREK-ee" },
+			{ word: "brickie", meaning: "A bricklayer", phonetic: "BRIK-ee" },
+			{ word: "buckleys", meaning: "No chance at all", phonetic: "BUK-leez" },
+			{ word: "bushie", meaning: "Someone from the outback", phonetic: "BUSH-ee" },
+			{ word: "cactus", meaning: "Dead, broken, useless", phonetic: "KAK-tus" },
+			{ word: "cark", meaning: "To die or break down", phonetic: "KAHK" },
+			{ word: "cheeky", meaning: "Playfully rude", phonetic: "CHEE-kee" },
+			{ word: "chippy", meaning: "A carpenter", phonetic: "CHIP-ee" },
+			{ word: "chrissie", meaning: "Christmas", phonetic: "KRIS-ee" },
+			{ word: "clucky", meaning: "Wanting to have a baby", phonetic: "KLUK-ee" },
+			{ word: "cockle", meaning: "A farmer", phonetic: "KOK-ul" },
+			{ word: "coldie", meaning: "A cold beer", phonetic: "KOHL-dee" },
+			{ word: "compo", meaning: "Workers compensation", phonetic: "KOM-poh" },
+			{ word: "coppers", meaning: "Police officers", phonetic: "KOP-ahz" },
+			{ word: "corker", meaning: "Something excellent", phonetic: "KOR-kah" },
+			{ word: "cozzie", meaning: "A swimming costume", phonetic: "KOZ-ee" },
+			{ word: "cranky", meaning: "Angry, in a bad mood", phonetic: "KRANK-ee" },
+			{ word: "crook", meaning: "Sick or unwell", phonetic: "KROOK" },
+			{ word: "cuppa", meaning: "A cup of tea", phonetic: "KUP-ah" },
+			{ word: "dag", meaning: "A funny or dorky person", phonetic: "DAG" },
+			{ word: "deadset", meaning: "Absolutely, for real", phonetic: "DED-set" },
+			{ word: "dekko", meaning: "A look or glance", phonetic: "DEK-oh" },
+			{ word: "dero", meaning: "A derelict person", phonetic: "DEER-oh" },
+			{ word: "digger", meaning: "An Australian soldier", phonetic: "DIG-ah" },
+			{ word: "dinkum", meaning: "Genuine, real", phonetic: "DINK-um" },
+			{ word: "dinky", meaning: "Small, cute", phonetic: "DINK-ee" },
+			{ word: "divvy", meaning: "To divide up", phonetic: "DIV-ee" },
+			{ word: "dobber", meaning: "An informer, tattletale", phonetic: "DOB-ah" },
+			{ word: "docket", meaning: "A receipt", phonetic: "DOK-it" },
+			{ word: "dodgy", meaning: "Suspicious, unreliable", phonetic: "DOJ-ee" },
+			{ word: "donger", meaning: "A portable building", phonetic: "DONG-ah" },
+			{ word: "doodle", meaning: "Something easy", phonetic: "DOO-dul" },
+			{ word: "drainer", meaning: "Something exhausting", phonetic: "DRAY-nah" },
+			{ word: "dropkick", meaning: "A useless person", phonetic: "DROP-kik" },
+			{ word: "durrie", meaning: "A cigarette", phonetic: "DUR-ee" },
+			{ word: "earbash", meaning: "To talk nonstop", phonetic: "EER-bash" },
+			{ word: "ekka", meaning: "A local exhibition", phonetic: "EK-ah" },
+			{ word: "facey", meaning: "Facebook", phonetic: "FAYSS-ee" },
+			{ word: "feral", meaning: "Wild, unkempt", phonetic: "FER-ul" },
+			{ word: "figjam", meaning: "A conceited person", phonetic: "FIG-jam" },
+			{ word: "flick", meaning: "To get rid of", phonetic: "FLIK" },
+			{ word: "flog", meaning: "To sell or steal", phonetic: "FLOG" },
+			{ word: "fossick", meaning: "To search or rummage", phonetic: "FOS-ik" },
+			{ word: "gab", meaning: "To chat, talk a lot", phonetic: "GAB" },
+			{ word: "galoot", meaning: "A clumsy person", phonetic: "gah-LOOT" },
+			{ word: "gnarly", meaning: "Dangerous or impressive", phonetic: "NAH-lee" },
+			{ word: "gobsmacked", meaning: "Astonished, shocked", phonetic: "GOB-smakt" },
+			{ word: "grog", meaning: "Alcohol, booze", phonetic: "GROG" },
+			{ word: "grub", meaning: "Food", phonetic: "GRUB" },
+			{ word: "gumtree", meaning: "A eucalyptus tree", phonetic: "GUM-tree" },
+			{ word: "gutful", meaning: "Had enough", phonetic: "GUT-ful" },
+			{ word: "hardyakka", meaning: "Hard work", phonetic: "hahd-YAK-ah" },
+			{ word: "hollies", meaning: "Holidays, vacation", phonetic: "HOL-eez" },
+			{ word: "hoon", meaning: "A reckless driver", phonetic: "HOON" },
+			{ word: "howzat", meaning: "How is that", phonetic: "HOW-zat" },
+			{ word: "humpy", meaning: "A small makeshift shelter", phonetic: "HUM-pee" },
+			{ word: "iffy", meaning: "Doubtful, uncertain", phonetic: "IF-ee" },
+			{ word: "jarrah", meaning: "Australian hardwood tree", phonetic: "JAR-ah" },
+			{ word: "joey", meaning: "A baby kangaroo", phonetic: "JOH-ee" },
+			{ word: "journo", meaning: "A journalist", phonetic: "JUR-noh" },
+			{ word: "keen", meaning: "Eager, enthusiastic", phonetic: "KEEN" },
+			{ word: "kerfuffle", meaning: "A commotion, fuss", phonetic: "kah-FUF-ul" },
+			{ word: "kindy", meaning: "Kindergarten", phonetic: "KIN-dee" },
+			{ word: "knickers", meaning: "Underwear", phonetic: "NIK-ahz" },
+			{ word: "knocker", meaning: "A critic or complainer", phonetic: "NOK-ah" },
+			{ word: "lamington", meaning: "Sponge cake with chocolate", phonetic: "LAM-ing-tun" },
+			{ word: "lappy", meaning: "A laptop computer", phonetic: "LAP-ee" },
+			{ word: "lippy", meaning: "Lipstick", phonetic: "LIP-ee" },
+			{ word: "lob", meaning: "To arrive somewhere", phonetic: "LOB" },
+			{ word: "longneck", meaning: "A 750ml bottle of beer", phonetic: "LONG-nek" },
+			{ word: "lurk", meaning: "A scheme or racket", phonetic: "LURK" },
+			{ word: "maccas", meaning: "McDonald's", phonetic: "MAK-ahz" },
+			{ word: "mate", meaning: "A friend, buddy", phonetic: "MAYT" },
+			{ word: "mateship", meaning: "Close friendship, loyalty", phonetic: "MAYT-ship" },
+			{ word: "mental", meaning: "Crazy, wild", phonetic: "MEN-tul" },
+			{ word: "middy", meaning: "A medium glass of beer", phonetic: "MID-ee" },
+			{ word: "milko", meaning: "A milkman", phonetic: "MIL-koh" },
+			{ word: "mob", meaning: "A group of people or animals", phonetic: "MOB" },
+			{ word: "muddy", meaning: "A mud crab", phonetic: "MUD-ee" },
+			{ word: "mug", meaning: "A gullible person", phonetic: "MUG" },
+			{ word: "mushie", meaning: "A mushroom", phonetic: "MUSH-ee" },
+			{ word: "nana", meaning: "A banana or grandmother", phonetic: "NAH-nah" },
+			{ word: "narky", meaning: "Irritable, grumpy", phonetic: "NAH-kee" },
+			{ word: "nibblies", meaning: "Snacks, finger food", phonetic: "NIB-leez" },
+			{ word: "nifty", meaning: "Clever, handy", phonetic: "NIF-tee" },
+			{ word: "nit", meaning: "An idiot", phonetic: "NIT" },
+			{ word: "nitwit", meaning: "A foolish person", phonetic: "NIT-wit" },
+			{ word: "noggin", meaning: "The head", phonetic: "NOG-in" },
+			{ word: "nuddy", meaning: "Naked", phonetic: "NUD-ee" },
+			{ word: "offsider", meaning: "A helper, assistant", phonetic: "OFF-sy-dah" },
+			{ word: "onya", meaning: "Good on you, well done", phonetic: "ON-yah" },
+			{ word: "oodles", meaning: "Lots of something", phonetic: "OO-dulz" },
+			{ word: "pav", meaning: "Pavlova dessert", phonetic: "PAV" },
+			{ word: "piehole", meaning: "Mouth", phonetic: "PY-hohl" },
+			{ word: "plonk", meaning: "Cheap wine", phonetic: "PLONK" },
+			{ word: "polly", meaning: "A politician", phonetic: "POL-ee" },
+			{ word: "pommy", meaning: "A British person", phonetic: "POM-ee" },
+			{ word: "postie", meaning: "A mail carrier", phonetic: "POHS-tee" },
+			{ word: "pressie", meaning: "A present, gift", phonetic: "PREZ-ee" },
+			{ word: "puggle", meaning: "A baby echidna", phonetic: "PUG-ul" },
+			{ word: "rage", meaning: "To party hard", phonetic: "RAYJ" },
+			{ word: "rapt", meaning: "Very happy, delighted", phonetic: "RAPT" },
+			{ word: "rego", meaning: "Vehicle registration", phonetic: "REJ-oh" },
+			{ word: "ridgy", meaning: "Genuine, original", phonetic: "RIJ-ee" },
+			{ word: "riggings", meaning: "Clothes, outfit", phonetic: "RIG-ingz" },
+			{ word: "roo", meaning: "A kangaroo", phonetic: "ROO" },
+			{ word: "rottie", meaning: "A Rottweiler dog", phonetic: "ROT-ee" },
+			{ word: "rubbish", meaning: "Nonsense or trash", phonetic: "RUB-ish" },
+			{ word: "salvo", meaning: "A Salvation Army member", phonetic: "SAL-voh" },
+			{ word: "schooner", meaning: "A large glass of beer", phonetic: "SKOO-nah" },
+			{ word: "scorcher", meaning: "An extremely hot day", phonetic: "SKAW-chah" },
+			{ word: "screamer", meaning: "Something amazing", phonetic: "SKREE-mah" },
+			{ word: "seppo", meaning: "An American person", phonetic: "SEP-oh" },
+			{ word: "shandy", meaning: "Beer mixed with lemonade", phonetic: "SHAN-dee" },
+			{ word: "shattered", meaning: "Very tired", phonetic: "SHAT-uhd" },
+			{ word: "shonky", meaning: "Unreliable, dodgy", phonetic: "SHONK-ee" },
+			{ word: "shout", meaning: "To buy a round of drinks", phonetic: "SHOWT" },
+			{ word: "skint", meaning: "Broke, no money", phonetic: "SKINT" },
+			{ word: "snazzy", meaning: "Stylish, attractive", phonetic: "SNAZ-ee" },
+			{ word: "sook", meaning: "A crybaby, wimp", phonetic: "SOOK" },
+			{ word: "sparrow", meaning: "Very early morning", phonetic: "SPAR-oh" },
+			{ word: "speedo", meaning: "A speedometer or swimwear", phonetic: "SPEE-doh" },
+			{ word: "spew", meaning: "To vomit", phonetic: "SPYOO" },
+			{ word: "sprung", meaning: "Caught doing something wrong", phonetic: "SPRUNG" },
+			{ word: "squizzy", meaning: "A quick look", phonetic: "SKWIZ-ee" },
+			{ word: "stickybeak", meaning: "A nosy person", phonetic: "STIK-ee-beek" },
+			{ word: "stinger", meaning: "A jellyfish", phonetic: "STING-ah" },
+			{ word: "stonkered", meaning: "Very drunk or exhausted", phonetic: "STONK-uhd" },
+			{ word: "stroppy", meaning: "Bad-tempered, difficult", phonetic: "STROP-ee" },
+			{ word: "stuffed", meaning: "Tired or broken", phonetic: "STUFT" },
+			{ word: "sus", meaning: "Suspicious, suspect", phonetic: "SUSS" },
+			{ word: "swag", meaning: "A bedroll for camping", phonetic: "SWAG" },
+			{ word: "ta", meaning: "Thank you", phonetic: "TAH" },
+			{ word: "tallie", meaning: "A 750ml bottle of beer", phonetic: "TAL-ee" },
+			{ word: "telly", meaning: "Television", phonetic: "TEL-ee" },
+			{ word: "thingo", meaning: "A thing, whatchamacallit", phonetic: "THING-oh" },
+			{ word: "tinnie", meaning: "A small aluminum boat or can of beer", phonetic: "TIN-ee" },
+			{ word: "toot", meaning: "A toilet", phonetic: "TOOT" },
+			{ word: "tosser", meaning: "A contemptible person", phonetic: "TOSS-ah" },
+			{ word: "trackies", meaning: "Tracksuit pants", phonetic: "TRAK-eez" },
+			{ word: "truckie", meaning: "A truck driver", phonetic: "TRUK-ee" },
+			{ word: "turps", meaning: "Alcohol, booze", phonetic: "TURPS" },
+			{ word: "galah", meaning: "A bird", phonetic: "GAL-ah" },
+			{ word: "twit", meaning: "A silly person", phonetic: "TWIT" },
+			{ word: "uni", meaning: "University", phonetic: "YOO-nee" },
+			{ word: "veggie", meaning: "A vegetable", phonetic: "VEJ-ee" },
+			{ word: "verandah", meaning: "A porch or balcony", phonetic: "vuh-RAN-dah" },
+			{ word: "vejjo", meaning: "A vegetarian", phonetic: "VEJ-oh" },
+			{ word: "wag", meaning: "To skip school", phonetic: "WAG" },
+			{ word: "walkabout", meaning: "A long wandering journey", phonetic: "WAW-kah-bowt" },
+			{ word: "wally", meaning: "A silly or inept person", phonetic: "WOL-ee" },
+			{ word: "waratah", meaning: "An Australian native flower", phonetic: "WOR-ah-tah" },
+			{ word: "weekender", meaning: "A holiday cottage", phonetic: "week-END-ah" },
+			{ word: "westie", meaning: "A person from western suburbs", phonetic: "WEST-ee" },
+			{ word: "whingebag", meaning: "A habitual complainer", phonetic: "WINJ-bag" },
+			{ word: "wog", meaning: "A flu or illness", phonetic: "WOG" },
+			{ word: "wonky", meaning: "Unstable, shaky", phonetic: "WONK-ee" },
+			{ word: "woolly", meaning: "A sheep", phonetic: "WOOL-ee" },
+			{ word: "wowser", meaning: "A killjoy, spoilsport", phonetic: "WOW-zah" },
+			{ word: "yacker", meaning: "Someone who talks a lot", phonetic: "YAK-ah" },
+			{ word: "yarn", meaning: "A long story or chat", phonetic: "YAHN" },
+			{ word: "yonks", meaning: "A long time", phonetic: "YONKS" },
+			{ word: "zack", meaning: "A small amount of money", phonetic: "ZAK" },
+			{ word: "belter", meaning: "A fantastic time", phonetic: "BEL-tah" },
+			{ word: "chinwag", meaning: "A long chat or gossip", phonetic: "CHIN-wag" },
+			{ word: "nowukkas", meaning: "No worries", phonetic: "noh-WUK-ahz" },
+			{ word: "fairdinkum", meaning: "Genuine, the real deal", phonetic: "fair-DINK-um" },
+			{ word: "drover", meaning: "A cattle herder", phonetic: "DROH-vah" },
+			{ word: "oz", meaning: "Australia", phonetic: "OZ" },
+		];
+
+		const SYMBOLS = ['!', '@', '#', '$', '%', '&', '*', '?'];
+		const SEPARATORS = ['-', '_'];
+
+		function secureRandom(max) {
+			const arr = new Uint32Array(1);
+			crypto.getRandomValues(arr);
+			return arr[0] % max;
+		}
+
+		function pickRandom(arr) {
+			return arr[secureRandom(arr.length)];
+		}
+
+		function shuffleArray(arr) {
+			const a = [...arr];
+			for (let i = a.length - 1; i > 0; i--) {
+				const j = secureRandom(i + 1);
+				[a[i], a[j]] = [a[j], a[i]];
+			}
+			return a;
+		}
+
+		function generatePassword() {
+			const wordCount = parseInt(document.getElementById('wordCount').value);
+			const addNumbers = document.getElementById('optNumbers').checked;
+			const addSymbols = document.getElementById('optSymbols').checked;
+			const capitalize = document.getElementById('optCapitalize').checked;
+			const sep = document.querySelector('.sep-btn.active').dataset.sep;
+
+			// Pick unique words
+			const shuffled = shuffleArray(SLANG);
+			const chosen = shuffled.slice(0, wordCount);
+
+			// Build password parts
+			let words = chosen.map(item => {
+				let w = item.word;
+				if (capitalize) w = w.charAt(0).toUpperCase() + w.slice(1);
+				return w;
+			});
+
+			let password = words.join(sep);
+
+			if (addNumbers) {
+				const num = secureRandom(100);
+				password += (sep ? sep : '') + num;
+			}
+
+			if (addSymbols) {
+				password += pickRandom(SYMBOLS);
+			}
+
+			return { password, words: chosen };
+		}
+
+		function estimateStrength(password) {
+			const len = password.length;
+			let charsetSize = 0;
+			if (/[a-z]/.test(password)) charsetSize += 26;
+			if (/[A-Z]/.test(password)) charsetSize += 26;
+			if (/[0-9]/.test(password)) charsetSize += 10;
+			if (/[^a-zA-Z0-9]/.test(password)) charsetSize += 32;
+
+			const entropy = len * Math.log2(charsetSize || 1);
+
+			if (entropy < 30) return { label: 'Weak as, mate', pct: 20, color: '#C4412B' };
+			if (entropy < 50) return { label: 'Getting there', pct: 45, color: '#E8752A' };
+			if (entropy < 70) return { label: 'Pretty solid', pct: 65, color: '#F2C744' };
+			if (entropy < 90) return { label: 'Ripper strong!', pct: 85, color: '#1A8A7D' };
+			return { label: 'Fort Knox, mate! 🔒', pct: 100, color: '#1A8A7D' };
+		}
+
+		function renderPassword() {
+			const { password, words } = generatePassword();
+			const display = document.getElementById('passwordDisplay');
+			const wordList = document.getElementById('wordList');
+			const strengthContainer = document.getElementById('strengthContainer');
+			const strengthFill = document.getElementById('strengthFill');
+			const strengthText = document.getElementById('strengthText');
+
+			// Animate password
+			display.textContent = password;
+			display.classList.remove('empty', 'pop-in');
+			void display.offsetWidth; // reflow
+			display.classList.add('pop-in');
+
+			// Strength
+			const str = estimateStrength(password);
+			strengthContainer.style.display = 'block';
+			strengthFill.style.width = str.pct + '%';
+			strengthFill.style.background = str.color;
+			strengthText.textContent = str.label;
+			strengthText.style.color = str.color;
+
+			// Breakdown
+			wordList.innerHTML = words.map(item => `
+    <div class="word-item">
+      <span class="word-slang">${item.word}</span>
+      <span class="word-phonetic">/${item.phonetic}/</span>
+      <span class="word-meaning">${item.meaning}</span>
+    </div>
+  `).join('');
+
+			// Reset copy button
+			const copyBtn = document.getElementById('copyBtn');
+			copyBtn.classList.remove('copied');
+			copyBtn.innerHTML = `
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+    Copy
+  `;
+		}
+
+		function copyPassword() {
+			const display = document.getElementById('passwordDisplay');
+			const copyBtn = document.getElementById('copyBtn');
+
+			if (display.classList.contains('empty')) return;
+
+			navigator.clipboard.writeText(display.textContent).then(() => {
+				copyBtn.classList.add('copied');
+				copyBtn.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Copied!
+    `;
+				setTimeout(() => {
+					copyBtn.classList.remove('copied');
+					copyBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Copy
+      `;
+				}, 2000);
+			});
+		}
+
+		// Event listeners
+		document.getElementById('generateBtn').addEventListener('click', renderPassword);
+		document.getElementById('refreshBtn').addEventListener('click', renderPassword);
+		document.getElementById('copyBtn').addEventListener('click', copyPassword);
+
+		document.getElementById('wordCount').addEventListener('input', (e) => {
+			document.getElementById('wordCountDisplay').textContent = e.target.value;
+		});
+
+		// Separator toggle
+		document.querySelectorAll('.sep-btn').forEach(btn => {
+			btn.addEventListener('click', () => {
+				document.querySelectorAll('.sep-btn').forEach(b => b.classList.remove('active'));
+				btn.classList.add('active');
+			});
+		});
+
+		// Keyboard shortcut
+		document.addEventListener('keydown', (e) => {
+			if (e.code === 'Space' && e.target === document.body) {
+				e.preventDefault();
+				renderPassword();
+			}
+		});
+	</script>
+
+</body>
+
+</html>
