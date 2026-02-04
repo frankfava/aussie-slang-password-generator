@@ -641,6 +641,48 @@
 			animation: popIn 0.35s ease-out;
 		}
 
+		/* === DOWN UNDER BUTTON === */
+		.down-under-btn {
+			position: fixed;
+			top: 1rem;
+			right: 1rem;
+			padding: 0.5rem 1rem;
+			border-radius: 20px;
+			border: 2px solid rgba(61, 43, 31, 0.15);
+			background: var(--white);
+			color: var(--bark);
+			font-family: 'Outfit', sans-serif;
+			font-size: 0.8rem;
+			font-weight: 600;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			z-index: 100;
+			box-shadow: 0 2px 8px rgba(61, 43, 31, 0.1);
+		}
+
+		.down-under-btn:hover {
+			background: var(--ocean-teal);
+			border-color: var(--ocean-teal);
+			color: var(--white);
+			transform: scale(1.05);
+		}
+
+		.down-under-btn.flipped {
+			background: var(--outback-orange);
+			border-color: var(--outback-orange);
+			color: var(--white);
+		}
+
+		/* === FLIP ANIMATION === */
+		.container {
+			transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+			transform-origin: center center;
+		}
+
+		.container.flipped {
+			transform: rotate(180deg);
+		}
+
 		/* === RESPONSIVE === */
 		@media (max-width: 500px) {
 			.container {
@@ -665,6 +707,8 @@
 </head>
 
 <body>
+
+	<button class="down-under-btn" id="downUnderBtn">🌏 View from Down Under</button>
 
 	<div class="container">
 		<header>
@@ -773,7 +817,7 @@
 			</div>
 		</div>
 
-		<footer>Powered by Vegemite. No worries, it's secure.</footer>
+		<footer>Powered by a Vegemite jar lid that's been cranked on way too hard. No worries, it's secure.</footer>
 	</div>
 
 	<script>
@@ -1226,6 +1270,20 @@
 			if (e.code === 'Space' && e.target === document.body) {
 				e.preventDefault();
 				renderPassword();
+			}
+		});
+
+		// Down Under flip toggle
+		document.getElementById('downUnderBtn').addEventListener('click', () => {
+			const container = document.querySelector('.container');
+			const btn = document.getElementById('downUnderBtn');
+			container.classList.toggle('flipped');
+			btn.classList.toggle('flipped');
+
+			if (container.classList.contains('flipped')) {
+				btn.textContent = '🔝 Back to the North';
+			} else {
+				btn.textContent = '🦘 View from Down Under';
 			}
 		});
 	</script>
